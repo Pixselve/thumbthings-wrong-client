@@ -2,7 +2,8 @@
 import CardsBar from "@/components/CardsBar";
 import {useEffect, useState} from "react";
 import {CardType} from "@/components/CardInDeck";
-import {DECK_SIZE, SHUFFLE_PRICE, TIME_FOR_ONE_ACTION_POINT,} from "@/lib/config";
+import {DECK_SIZE, SHUFFLE_PRICE, TIME_FOR_ONE_ACTION_POINT, WEB_SOCKET_URL,} from "@/lib/config";
+import useWebSocket from "react-use-websocket";
 
 /**
  * @returns a random card type
@@ -17,6 +18,11 @@ interface InGameProps {
 }
 
 export default function InGame({ isPlayerEnemy, username }: InGameProps) {
+  const { sendMessage, lastMessage, readyState } = useWebSocket(
+    WEB_SOCKET_URL,
+    { share: true }
+  );
+
   const [progress, setProgress] = useState(0);
   const [cardDeck, setCardDeck] = useState<CardType[]>([]);
   const [roleDisplay, setRoleDisplay] = useState(true);
@@ -54,6 +60,7 @@ export default function InGame({ isPlayerEnemy, username }: InGameProps) {
       newDeck.splice(index, 1, getRandomCard());
       return newDeck;
     });
+    sendMessage(`UseCard;${username};${cardType}`);
     setProgress((prevProgress) => Math.max(0, prevProgress - price));
   }
 
