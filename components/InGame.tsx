@@ -8,17 +8,26 @@ import {DECK_SIZE, SHUFFLE_PRICE, TIME_FOR_ONE_ACTION_POINT,} from "@/lib/config
  * @returns a random card type
  */
 function getRandomCard(): CardType {
-    return Math.floor(Math.random() * 6);
+  return Math.floor(Math.random() * 6);
 }
 
 interface InGameProps {
-    isPlayerEnemy: boolean;
-    username: string;
+  isPlayerEnemy: boolean;
+  username: string;
 }
 
-export default function InGame({isPlayerEnemy, username}: InGameProps) {
+export default function InGame({ isPlayerEnemy, username }: InGameProps) {
   const [progress, setProgress] = useState(0);
   const [cardDeck, setCardDeck] = useState<CardType[]>([]);
+  const [roleDisplay, setRoleDisplay] = useState(true);
+
+  useEffect(() => {
+    // set the role display to false after 3 seconds
+    const timer = setTimeout(() => {
+      setRoleDisplay(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // every 1 seconds, give 1 new progress (react syntax)
   useEffect(() => {
@@ -49,17 +58,37 @@ export default function InGame({isPlayerEnemy, username}: InGameProps) {
   }
 
   function shuffleDeck() {
-    setCardDeck((prevDeck) => {
-      const newDeck = [...prevDeck];
-      for (let i = 0; i < DECK_SIZE; i++) {
-        const randomIndex = Math.floor(Math.random() * DECK_SIZE);
-        const tmp = newDeck[i];
-        newDeck[i] = newDeck[randomIndex];
-        newDeck[randomIndex] = tmp;
-      }
-      return newDeck;
-    });
+    // get a new deck
+    const newDeck = [];
+    for (let i = 0; i < DECK_SIZE; i++) {
+      newDeck.push(getRandomCard());
+    }
+    setCardDeck(newDeck);
     setProgress((prevProgress) => Math.max(0, prevProgress - SHUFFLE_PRICE));
+  }
+
+  if (roleDisplay) {
+    if (isPlayerEnemy) {
+      return (
+        <div className="flex flex-col justify-center items-center h-full space-y-4">
+          <h1 className="text-5xl">👿</h1>
+          <h2 className="font-bold text-2xl">Vous êtes un méchant</h2>
+          <div className="p-2 bg-slate-500 rounded-lg text-white">
+            La partie commence dans 5 secondes...
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex flex-col justify-center items-center h-full space-y-4">
+          <h1 className="text-5xl">🐈</h1>
+          <h2 className="font-bold text-2xl">Vous êtes un gentil</h2>
+          <div className="p-2 bg-slate-500 rounded-lg text-white">
+            La partie commence dans 5 secondes...
+          </div>
+        </div>
+      );
+    }
   }
 
   return (
