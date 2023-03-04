@@ -3,6 +3,7 @@
 import ProgressBar from "@/components/ProgressBar";
 import { CardInDeck, CardType } from "@/components/CardInDeck";
 import { SHUFFLE_PRICE } from "@/lib/config";
+import { motion } from "framer-motion";
 
 interface CardsBarProps {
   progress: number;
@@ -41,9 +42,10 @@ export default function CardsBar({
 
         <div className="bg-blue-500 w-[85%] shadow-5xl p-2 space-y-4">
           <div className="flex justify-between items-end">
-            <div className="grid grid-cols-4 gap-1">
+            <motion.div className="grid grid-cols-4 gap-1">
               {deck.map((cardType, index) => (
                 <CardInDeck
+                  key={index * cardType}
                   progress={progress}
                   onClick={(cardType1, price) =>
                     onCardClick(index, cardType1, price)
@@ -51,7 +53,7 @@ export default function CardsBar({
                   cardType={cardType}
                 />
               ))}
-            </div>
+            </motion.div>
           </div>
           <ProgressBar progress={progress}></ProgressBar>
         </div>

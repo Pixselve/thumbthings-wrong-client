@@ -13,8 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="bg-black h-screen">
-        <main className="max-w-2xl bg-white m-auto h-full">{children}</main>
+      <body className="bg-black">
+        <main className="max-w-2xl bg-white m-auto h-full h-screen overflow-hidden">
+          {children}
+        </main>
       </body>
     </html>
   );

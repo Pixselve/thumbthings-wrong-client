@@ -6,3 +6,5 @@ export const SHUFFLE_PRICE = 3;
 
 export const WEB_SOCKET_URL =
   process.env.WEB_SOCKET_URL || "wss://server-tw.mael.app";
+
+export const SECONDS_BEFORE_GAME_START = 5;

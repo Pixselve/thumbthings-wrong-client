@@ -2,8 +2,15 @@
 import CardsBar from "@/components/CardsBar";
 import {useEffect, useState} from "react";
 import {CardType} from "@/components/CardInDeck";
-import {DECK_SIZE, SHUFFLE_PRICE, TIME_FOR_ONE_ACTION_POINT, WEB_SOCKET_URL,} from "@/lib/config";
+import {
+  DECK_SIZE,
+  SECONDS_BEFORE_GAME_START,
+  SHUFFLE_PRICE,
+  TIME_FOR_ONE_ACTION_POINT,
+  WEB_SOCKET_URL,
+} from "@/lib/config";
 import useWebSocket from "react-use-websocket";
+import {motion} from "framer-motion";
 
 /**
  * @returns a random card type
@@ -27,13 +34,19 @@ export default function InGame({ isPlayerEnemy, username }: InGameProps) {
   const [cardDeck, setCardDeck] = useState<CardType[]>([]);
   const [roleDisplay, setRoleDisplay] = useState(true);
 
+  const [secondsLeft, setSecondsLeft] = useState(SECONDS_BEFORE_GAME_START);
+
   useEffect(() => {
+    if (secondsLeft === 0) {
+      setRoleDisplay(false);
+      return;
+    }
     // set the role display to false after 3 seconds
     const timer = setTimeout(() => {
-      setRoleDisplay(false);
-    }, 5000);
+      setSecondsLeft((prevSeconds) => prevSeconds - 1);
+    }, 1000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [secondsLeft]);
 
   // every 1 seconds, give 1 new progress (react syntax)
   useEffect(() => {
@@ -75,31 +88,17 @@ export default function InGame({ isPlayerEnemy, username }: InGameProps) {
   }
 
   if (roleDisplay) {
-    if (isPlayerEnemy) {
-      return (
-        <div className="flex flex-col justify-center items-center h-full space-y-4">
-          <h1 className="text-5xl">👿</h1>
-          <h2 className="font-bold text-2xl">Vous êtes un méchant</h2>
-          <div className="p-2 bg-slate-500 rounded-lg text-white">
-            La partie commence dans 5 secondes...
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex flex-col justify-center items-center h-full space-y-4">
-          <h1 className="text-5xl">🐈</h1>
-          <h2 className="font-bold text-2xl">Vous êtes un gentil</h2>
-          <div className="p-2 bg-slate-500 rounded-lg text-white">
-            La partie commence dans 5 secondes...
-          </div>
-        </div>
-      );
-    }
+    return (
+      <RoleDisplay
+        isEnemy={isPlayerEnemy}
+        secondsLeft={secondsLeft}
+      ></RoleDisplay>
+    );
   }
 
   return (
-    <div className="flex flex-col justify-end h-full">
+    <div className="flex flex-col justify-end h-full relative">
+      {/*<SelectPlayerModal></SelectPlayerModal>*/}
       <CardsBar
         onShuffle={shuffleDeck}
         onCardClick={selectACard}
@@ -107,5 +106,37 @@ export default function InGame({ isPlayerEnemy, username }: InGameProps) {
         progress={progress}
       ></CardsBar>
     </div>
+  );
+}
+
+function RoleDisplay({
+  isEnemy,
+  secondsLeft,
+}: {
+  isEnemy: boolean;
+  secondsLeft: number;
+}) {
+  const animation = {
+    hidden: { opacity: 0, y: -100 },
+    visible: {
+      opacity: 1,
+      y: 0,
+    },
+  };
+  return (
+    <motion.div
+      variants={animation}
+      initial="hidden"
+      animate="visible"
+      className="flex flex-col justify-center items-center h-full space-y-4"
+    >
+      <h1 className="text-5xl text-center">{isEnemy ? "😡" : "😇"}</h1>
+      <h2 className="font-bold text-2xl">
+        Vous êtes un {isEnemy ? "méchant" : "gentil"}
+      </h2>
+      <div className="p-2 bg-slate-500 rounded-lg text-white">
+        La partie commence dans {secondsLeft} secondes...
+      </div>
+    </motion.div>
   );
 }
