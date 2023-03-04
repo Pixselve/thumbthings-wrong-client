@@ -45,7 +45,6 @@ export default function CardsBar({
             <motion.div className="grid grid-cols-4 gap-1">
               {deck.map((cardType, index) => (
                 <CardInDeck
-                  key={index * cardType}
                   progress={progress}
                   onClick={(cardType1, price) =>
                     onCardClick(index, cardType1, price)

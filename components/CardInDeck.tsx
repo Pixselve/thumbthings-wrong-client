@@ -22,13 +22,13 @@ function getCardImageAndPrice(cardType: CardType): {
 } {
   switch (cardType) {
     case CardType.INVERTED_CONTROLS:
-      return { image: "cards/Reverse_control.png", price: 1 };
+      return { image: "cards/Reverse_control.png", price: 6 };
     case CardType.INVERTED_CAMERA:
       return { image: "cards/camera_front.png", price: 2 };
     case CardType.LOW_GRAVITY:
-      return { image: "cards/gravity.png", price: 3 };
+      return { image: "cards/gravity.png", price: 4 };
     case CardType.NO_JUMP:
-      return { image: "cards/noJump.png", price: 4 };
+      return { image: "cards/noJump.png", price: 5 };
     case CardType.ALWAYS_MOVING:
       return { image: "cards/forcerun.png", price: 5 };
     case CardType.NO_COLLISION:
