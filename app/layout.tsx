@@ -14,7 +14,10 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="bg-black">
-        <main className="max-w-2xl bg-white m-auto h-full h-screen overflow-hidden">
+        <main
+          style={{ height: "100dvh" }}
+          className="max-w-2xl bg-white m-auto overflow-hidden"
+        >
           {children}
         </main>
       </body>
