@@ -19,7 +19,6 @@ function getCardImageAndPrice(cardType: CardType): {
     image: string;
     price: number;
 } {
-    console.log(cardType);
     switch (cardType) {
         case CardType.INVERTED_CONTROLS:
             return {image: "cards/noJump.png", price: 1};
@@ -38,8 +37,7 @@ function getCardImageAndPrice(cardType: CardType): {
 
 export function CardInDeck({cardType, onClick, progress}: CardInDeckProps) {
     const {image, price} = useMemo(() => {
-        const data = getCardImageAndPrice(cardType);
-        return data;
+        return getCardImageAndPrice(cardType);
     }, [cardType]);
 
     return (
