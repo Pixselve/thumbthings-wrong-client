@@ -1,12 +1,12 @@
-import {useMemo} from "react";
+import { useMemo } from "react";
 
 export enum CardType {
-    INVERTED_CONTROLS,
-    INVERTED_CAMERA,
-    LOW_GRAVITY,
-    NO_JUMP,
-    ALWAYS_MOVING,
-    NO_COLLISION,
+  INVERTED_CONTROLS,
+  INVERTED_CAMERA,
+  LOW_GRAVITY,
+  NO_JUMP,
+  ALWAYS_MOVING,
+  NO_COLLISION,
 }
 
 interface CardInDeckProps {
@@ -19,7 +19,7 @@ function getCardImageAndPrice(cardType: CardType): {
     image: string;
     price: number;
 } {
-    console.log(cardType)
+    console.log(cardType);
     switch (cardType) {
         case CardType.INVERTED_CONTROLS:
             return {image: "cards/noJump.png", price: 1};
@@ -38,27 +38,27 @@ function getCardImageAndPrice(cardType: CardType): {
 
 export function CardInDeck({cardType, onClick, progress}: CardInDeckProps) {
     const {image, price} = useMemo(() => {
-        const data = getCardImageAndPrice(cardType)
+        const data = getCardImageAndPrice(cardType);
         return data;
     }, [cardType]);
 
-
     return (
-        <div
-            onClick={() => (progress >= price) && onClick(cardType, price)}
-            className={`relative transition-all ${progress >= price ? 'opacity-100 cursor-pointer ' : 'grayscale'}`}
-        >
-            <img
-                className="bg-white overflow-hidden aspect-[6/8] w-full object-contain rounded-md border-black border-4"
-                src={image}
-                alt="Card image"
-            />
-            <div className="absolute -bottom-2 w-full flex justify-center">
-        <span
-            className="bg-green-600 h-8 aspect-square rounded-full flex items-center justify-center text-white border-black border-4">
-          {price}
-        </span>
-            </div>
+      <div
+        onClick={() => progress >= price && onClick(cardType, price)}
+        className={`relative transition-all ${
+          progress >= price ? "opacity-100 cursor-pointer " : "grayscale"
+        }`}
+      >
+        <img
+          className="bg-white overflow-hidden aspect-[6/8] w-full object-contain rounded-md border-black border-4"
+          src={image}
+          alt="Card image"
+        />
+        <div className="absolute -bottom-2 w-full flex justify-center">
+          <span className="bg-green-600 h-8 aspect-square rounded-full flex items-center justify-center text-white border-black border-4">
+            {price}
+          </span>
         </div>
+      </div>
     );
 }
