@@ -12,7 +12,7 @@ export default function Home() {
     { share: true }
   );
 
-  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(true);
   const [inWaitingRoom, setInWaitingRoom] = useState(false);
   const [username, setUsername] = useState("");
   const [isPlayerEnemy, setIsPlayerEnemy] = useState(false);

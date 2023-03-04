@@ -99,6 +99,7 @@ export default function InGame({ isPlayerEnemy, username }: InGameProps) {
   return (
     <div className="flex flex-col justify-end h-full relative">
       {/*<SelectPlayerModal></SelectPlayerModal>*/}
+      <img className="h-full object-cover" src="image.png" alt="cover" />
       <CardsBar
         onShuffle={shuffleDeck}
         onCardClick={selectACard}
