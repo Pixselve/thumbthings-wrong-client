@@ -57,6 +57,7 @@ export default function InGame({
     // set the role display to false after 3 seconds
     const timer = setTimeout(() => {
       setSecondsLeftNeutralized((prevSeconds) => prevSeconds - 1);
+      setProgress(0);
     }, 1000);
     return () => clearTimeout(timer);
   }, [secondsLeftNeutralized]);
@@ -89,9 +90,7 @@ export default function InGame({
   // every 1 seconds, give 1 new progress (react syntax)
   useEffect(() => {
     const timer = setInterval(() => {
-      if (secondsLeftNeutralized <= 0) {
-        setProgress((prevCount) => Math.min(10, prevCount + 1)); // update count based on previous count
-      }
+      setProgress((prevCount) => Math.min(10, prevCount + 1)); // update count based on previous count
     }, TIME_FOR_ONE_ACTION_POINT); // every 1000 milliseconds
     return () => clearInterval(timer); // clear interval when component unmounts
   }, []); // empty dependency array means run only once
