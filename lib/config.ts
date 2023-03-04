@@ -9,7 +9,7 @@ export const WEB_SOCKET_URL =
 
 export const SECONDS_BEFORE_GAME_START = 5;
 
-export const NEUTRALIZE_TIME = 5000;
+export const NEUTRALIZE_TIME = 5;
 
 export type CardType = keyof typeof CARDS;
 
@@ -58,9 +58,7 @@ export const CARDS = {
   },
   7: {
     image: "/cards/neutralize.png",
-    description: `Rend à 0 les actions d'un joueur et le bloque pendant ${
-      NEUTRALIZE_TIME / 1000
-    } secondes`,
+    description: `Rend à 0 les actions d'un joueur et le bloque pendant ${NEUTRALIZE_TIME} secondes`,
     price: 5,
     targetPlayer: true,
   },
