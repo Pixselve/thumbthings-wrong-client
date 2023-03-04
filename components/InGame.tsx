@@ -11,6 +11,8 @@ import {
 } from "@/lib/config";
 import useWebSocket from "react-use-websocket";
 import {motion} from "framer-motion";
+import Image from "next/image";
+import SelectPlayerModal from "./SelectPlayerModal";
 
 /**
  * @returns a random card type
@@ -22,9 +24,41 @@ function getRandomCard(): CardType {
 interface InGameProps {
   isPlayerEnemy: boolean;
   username: string;
+  players: string[];
 }
 
-export default function InGame({ isPlayerEnemy, username }: InGameProps) {
+const cardsVariants = [
+  {
+    text: "Inverser la caméra",
+    image: "/cards/camera_front.png",
+  },
+  {
+    text: "Supprimer les collisions",
+    image: "/cards/collisionromove.png",
+  },
+  {
+    text: "Force le joueur à se déplacer",
+    image: "/cards/forcerun.png",
+  },
+  {
+    text: "Inverser les touches",
+    image: "/cards/Reverse_control.png",
+  },
+  {
+    text: "Désactiver les sauts",
+    image: "/cards/noJump.png",
+  },
+  {
+    text: "Désactiver la gravité",
+    image: "/cards/gravity.png",
+  },
+];
+
+export default function InGame({
+  isPlayerEnemy,
+  username,
+  players,
+}: InGameProps) {
   const { sendMessage, lastMessage, readyState } = useWebSocket(
     WEB_SOCKET_URL,
     { share: true }
@@ -33,6 +67,7 @@ export default function InGame({ isPlayerEnemy, username }: InGameProps) {
   const [progress, setProgress] = useState(0);
   const [cardDeck, setCardDeck] = useState<CardType[]>([]);
   const [roleDisplay, setRoleDisplay] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [secondsLeft, setSecondsLeft] = useState(SECONDS_BEFORE_GAME_START);
 
@@ -97,9 +132,41 @@ export default function InGame({ isPlayerEnemy, username }: InGameProps) {
   }
 
   return (
-    <div className="flex flex-col justify-end h-full relative">
-      {/*<SelectPlayerModal></SelectPlayerModal>*/}
-      <img className="h-full object-cover" src="image.png" alt="cover" />
+    <div className="flex flex-col justify-between h-full relative bg-map bg-cover">
+      {isModalVisible && (
+        <SelectPlayerModal
+          players={players}
+          onPlayerSelected={() => {}}
+        ></SelectPlayerModal>
+      )}
+
+      <div className="p-4 space-y-4">
+        <Image
+          className="m-auto"
+          src="/logo.png"
+          alt="logo"
+          height={50}
+          width={150}
+        ></Image>
+        <div className="bg-white p-4 rounded-lg space-y-2 shadow-2xl">
+          <h1 className="text-2xl font-bold text-center">Cartes</h1>
+
+          <div className="grid grid-cols-2 gap-4">
+            {cardsVariants.map((card, index) => (
+              <div className="flex gap-2 items-center">
+                <Image
+                  src={card.image}
+                  alt={card.text}
+                  height={50}
+                  width={50}
+                ></Image>
+                <div>{card.text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <CardsBar
         onShuffle={shuffleDeck}
         onCardClick={selectACard}

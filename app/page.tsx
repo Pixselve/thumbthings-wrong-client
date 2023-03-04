@@ -12,7 +12,7 @@ export default function Home() {
     { share: true }
   );
 
-  const [isGameStarted, setIsGameStarted] = useState(true);
+  const [isGameStarted, setIsGameStarted] = useState(false);
   const [inWaitingRoom, setInWaitingRoom] = useState(false);
   const [username, setUsername] = useState("");
   const [isPlayerEnemy, setIsPlayerEnemy] = useState(false);
@@ -58,7 +58,13 @@ export default function Home() {
   }, [lastMessage]);
 
   if (isGameStarted) {
-    return <InGame isPlayerEnemy={isPlayerEnemy} username={username} />;
+    return (
+      <InGame
+        players={players}
+        isPlayerEnemy={isPlayerEnemy}
+        username={username}
+      />
+    );
   }
   if (inWaitingRoom) {
     return <WaitingRoom players={players}></WaitingRoom>;

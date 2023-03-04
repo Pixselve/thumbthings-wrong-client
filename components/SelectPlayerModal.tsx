@@ -1,6 +1,14 @@
 import { motion } from "framer-motion";
 
-export default function SelectPlayerModal() {
+interface SelectPlayerModalProps {
+  players: string[];
+  onPlayerSelected: (player: string) => void;
+}
+
+export default function SelectPlayerModal({
+  players,
+  onPlayerSelected,
+}: SelectPlayerModalProps) {
   return (
     <motion.div
       animate={{ opacity: 1 }}
@@ -10,14 +18,18 @@ export default function SelectPlayerModal() {
       <motion.div
         animate={{ scale: 1 }}
         initial={{ scale: 0 }}
-        className="bg-white p-4 rounded-lg"
+        className="bg-white p-4 rounded-lg space-y-4"
       >
         <h1 className="font-bold">Choisir un joueur</h1>
         <div className="flex flex-col gap-2">
-          <button className="bg-green-600 p-2 rounded-lg">awd</button>
-          <button className="bg-green-600 p-2 rounded-lg">awd</button>
-          <button className="bg-green-600 p-2 rounded-lg">awd</button>
-          <button className="bg-green-600 p-2 rounded-lg">awd</button>
+          {players.map((player) => (
+            <button
+              onClick={() => onPlayerSelected(player)}
+              className="bg-green-600 p-2 rounded-lg"
+            >
+              {player}
+            </button>
+          ))}
         </div>
       </motion.div>
     </motion.div>

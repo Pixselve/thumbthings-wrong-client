@@ -20,7 +20,7 @@ export default function CardsBar({
 }: CardsBarProps) {
   return (
     <div className="relative">
-      <div className="bg-blue-600 h-16"></div>
+      <div className="bg-stacked-step bg-cover h-16"></div>
       <div className="absolute w-full bottom-0 flex justify-between">
         <div className="px-2">
           <button
@@ -40,7 +40,7 @@ export default function CardsBar({
           </button>
         </div>
 
-        <div className="bg-blue-500 w-[85%] shadow-5xl p-2 space-y-4">
+        <div className="bg-stacked-step bg-cover w-[85%] shadow-5xl p-2 space-y-4">
           <div className="flex justify-between items-end">
             <motion.div className="grid grid-cols-4 gap-1">
               {deck.map((cardType, index) => (
