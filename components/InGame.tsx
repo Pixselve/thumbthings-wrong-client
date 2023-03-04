@@ -11,7 +11,12 @@ function getRandomCard(): CardType {
     return Math.floor(Math.random() * 6);
 }
 
-export default function InGame() {
+interface InGameProps {
+    isPlayerEnemy: boolean;
+    username: string;
+}
+
+export default function InGame({isPlayerEnemy, username}: InGameProps) {
     const [progress, setProgress] = useState(0);
     const [cardDeck, setCardDeck] = useState<CardType[]>([]);
 

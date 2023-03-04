@@ -1,5 +1,6 @@
 import {FormEvent, useEffect, useState} from "react";
 import useWebSocket from "react-use-websocket";
+import {WEB_SOCKET_URL} from "@/lib/config";
 
 /**
  * Generate a username in the format : "Pseudocool" + random number
@@ -20,7 +21,7 @@ export default function ({}: Props) {
     const [error, setError] = useState("");
 
     const {sendMessage, lastMessage, readyState} = useWebSocket(
-        "ws://yami2200box.ddns.net:8080",
+        WEB_SOCKET_URL,
         {share: true}
     );
 
