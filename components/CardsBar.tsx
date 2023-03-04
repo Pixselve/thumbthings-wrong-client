@@ -1,8 +1,8 @@
 "use client";
 
 import ProgressBar from "@/components/ProgressBar";
-import { CardInDeck, CardType } from "@/components/CardInDeck";
-import { SHUFFLE_PRICE } from "@/lib/config";
+import { CardInDeck } from "@/components/CardInDeck";
+import { CardType, SHUFFLE_PRICE } from "@/lib/config";
 import { motion } from "framer-motion";
 
 interface CardsBarProps {
