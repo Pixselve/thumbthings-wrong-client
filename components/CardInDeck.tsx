@@ -49,7 +49,7 @@ export function CardInDeck({cardType, onClick, progress}: CardInDeckProps) {
             className={`relative transition-all ${progress >= price ? 'opacity-100 hover:-translate-y-5 hover:shadow cursor-pointer ' : 'grayscale'}`}
         >
             <img
-                className="bg-white overflow-hidden h-32 w-24 object-contain rounded-md border-black border-4"
+                className="bg-white overflow-hidden aspect-[6/8] w-full object-contain rounded-md border-black border-4"
                 src={image}
                 alt="Card image"
             />
