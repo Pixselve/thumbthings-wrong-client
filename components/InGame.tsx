@@ -170,7 +170,7 @@ export default function InGame({
     <div className="flex flex-col justify-between h-full relative bg-map bg-cover">
       {isModalVisible && (
         <SelectPlayerModal
-          players={players}
+          players={players.filter((player) => player !== username)}
           onPlayerSelected={sendCardToPlayer}
         ></SelectPlayerModal>
       )}
