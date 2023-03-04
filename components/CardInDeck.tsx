@@ -1,14 +1,6 @@
 import { motion } from "framer-motion";
 import { useMemo } from "react";
-
-export enum CardType {
-  INVERTED_CONTROLS,
-  INVERTED_CAMERA,
-  LOW_GRAVITY,
-  NO_JUMP,
-  ALWAYS_MOVING,
-  NO_COLLISION,
-}
+import { CARDS, CardType } from "@/lib/config";
 
 interface CardInDeckProps {
   cardType: CardType;
@@ -20,20 +12,7 @@ function getCardImageAndPrice(cardType: CardType): {
   image: string;
   price: number;
 } {
-  switch (cardType) {
-    case CardType.INVERTED_CONTROLS:
-      return { image: "cards/Reverse_control.png", price: 3 };
-    case CardType.INVERTED_CAMERA:
-      return { image: "cards/camera_front.png", price: 3 };
-    case CardType.LOW_GRAVITY:
-      return { image: "cards/gravity.png", price: 8 };
-    case CardType.NO_JUMP:
-      return { image: "cards/noJump.png", price: 5 };
-    case CardType.ALWAYS_MOVING:
-      return { image: "cards/forcerun.png", price: 6 };
-    case CardType.NO_COLLISION:
-      return { image: "cards/collisionromove.png", price: 5 };
-  }
+    return CARDS[cardType];
 }
 
 export function CardInDeck({ cardType, onClick, progress }: CardInDeckProps) {

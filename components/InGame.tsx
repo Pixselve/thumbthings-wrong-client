@@ -1,9 +1,12 @@
 "use client";
 import CardsBar from "@/components/CardsBar";
 import {useEffect, useState} from "react";
-import {CardType} from "@/components/CardInDeck";
+
 import {
+  CARDS,
+  CardType,
   DECK_SIZE,
+  NEUTRALIZE_TIME,
   SECONDS_BEFORE_GAME_START,
   SHUFFLE_PRICE,
   TIME_FOR_ONE_ACTION_POINT,
@@ -18,7 +21,8 @@ import SelectPlayerModal from "./SelectPlayerModal";
  * @returns a random card type
  */
 function getRandomCard(): CardType {
-  return Math.floor(Math.random() * 6);
+  const keys = Object.keys(CARDS) as unknown as CardType[];
+  return keys[Math.floor(Math.random() * keys.length)];
 }
 
 interface InGameProps {
@@ -26,33 +30,6 @@ interface InGameProps {
   username: string;
   players: string[];
 }
-
-const cardsVariants = [
-  {
-    text: "Inverser la caméra",
-    image: "/cards/camera_front.png",
-  },
-  {
-    text: "Supprimer les collisions",
-    image: "/cards/collisionromove.png",
-  },
-  {
-    text: "Force le joueur à se déplacer",
-    image: "/cards/forcerun.png",
-  },
-  {
-    text: "Inverser les touches",
-    image: "/cards/Reverse_control.png",
-  },
-  {
-    text: "Désactiver les sauts",
-    image: "/cards/noJump.png",
-  },
-  {
-    text: "Désactiver la gravité",
-    image: "/cards/gravity.png",
-  },
-];
 
 export default function InGame({
   isPlayerEnemy,
@@ -65,11 +42,37 @@ export default function InGame({
   );
 
   const [progress, setProgress] = useState(0);
-  const [cardDeck, setCardDeck] = useState<CardType[]>([]);
+  const [cardDeck, setCardDeck] = useState<number[]>([]);
   const [roleDisplay, setRoleDisplay] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const [cardWaitingToBeSent, setCardWaitingToBeSent] = useState(-1);
   const [secondsLeft, setSecondsLeft] = useState(SECONDS_BEFORE_GAME_START);
+
+  const [secondsLeftNeutralized, setSecondsLeftNeutralized] = useState(0);
+
+  useEffect(() => {
+    if (secondsLeftNeutralized === 0) {
+      return;
+    }
+    // set the role display to false after 3 seconds
+    const timer = setTimeout(() => {
+      setSecondsLeftNeutralized((prevSeconds) => prevSeconds - 1);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [secondsLeftNeutralized]);
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      const message = lastMessage.data;
+      if (message.startsWith("NeutralizePlayer;")) {
+        const player = message.split(";")[1];
+        if (player === username) {
+          setSecondsLeftNeutralized(NEUTRALIZE_TIME);
+          setProgress(0);
+        }
+      }
+    }
+  }, [lastMessage]);
 
   useEffect(() => {
     if (secondsLeft === 0) {
@@ -86,6 +89,9 @@ export default function InGame({
   // every 1 seconds, give 1 new progress (react syntax)
   useEffect(() => {
     const timer = setInterval(() => {
+      if (secondsLeftNeutralized !== 0) {
+        return;
+      }
       setProgress((prevCount) => Math.min(10, prevCount + 1)); // update count based on previous count
     }, TIME_FOR_ONE_ACTION_POINT); // every 1000 milliseconds
     return () => clearInterval(timer); // clear interval when component unmounts
@@ -93,10 +99,15 @@ export default function InGame({
 
   useEffect(() => {
     // fill the deck with random cards when the game starts
-    setCardDeck((prevDeck) => {
-      const newDeck = [];
+    setCardDeck(() => {
+      const newDeck: number[] = [];
       for (let i = 0; i < DECK_SIZE; i++) {
-        newDeck.push(getRandomCard());
+        let card = getRandomCard();
+        // do not give a new card that is already in the deck
+        while (newDeck.includes(card)) {
+          card = getRandomCard();
+        }
+        newDeck.push(card);
       }
       return newDeck;
     });
@@ -105,18 +116,42 @@ export default function InGame({
   function selectACard(index: number, cardType: CardType, price: number) {
     setCardDeck((prevDeck) => {
       const newDeck = [...prevDeck];
-      newDeck.splice(index, 1, getRandomCard());
+      let card = getRandomCard();
+      // do not give a new card that is already in the deck
+      while (newDeck.includes(card)) {
+        card = getRandomCard();
+      }
+      newDeck.splice(index, 1, card);
       return newDeck;
     });
-    sendMessage(`UseCard;${username};${cardType}`);
+
+    const card = CARDS[cardType];
+    if (card.targetPlayer) {
+      setCardWaitingToBeSent(cardType);
+      setIsModalVisible(true);
+    } else {
+      sendMessage(`UseCard;${username};${cardType}`);
+    }
+
     setProgress((prevProgress) => Math.max(0, prevProgress - price));
   }
 
+  function sendCardToPlayer(player: string) {
+    sendMessage(`TargetPlayer;${username};${player};${cardWaitingToBeSent}`);
+    setCardWaitingToBeSent(-1);
+    setIsModalVisible(false);
+  }
+
   function shuffleDeck() {
-    // get a new deck
-    const newDeck = [];
+    // get a new deck composed of random cards. Only unique cards are allowed
+    const newDeck: number[] = [];
     for (let i = 0; i < DECK_SIZE; i++) {
-      newDeck.push(getRandomCard());
+      let card = getRandomCard();
+      // do not give a new card that is already in the deck
+      while (newDeck.includes(card)) {
+        card = getRandomCard();
+      }
+      newDeck.push(card);
     }
     setCardDeck(newDeck);
     setProgress((prevProgress) => Math.max(0, prevProgress - SHUFFLE_PRICE));
@@ -136,10 +171,14 @@ export default function InGame({
       {isModalVisible && (
         <SelectPlayerModal
           players={players}
-          onPlayerSelected={() => {}}
+          onPlayerSelected={sendCardToPlayer}
         ></SelectPlayerModal>
       )}
-
+      {secondsLeftNeutralized !== 0 && (
+        <NeutralizedScreen
+          timeLeft={secondsLeftNeutralized}
+        ></NeutralizedScreen>
+      )}
       <div className="p-4 space-y-4">
         <Image
           className="m-auto"
@@ -152,15 +191,15 @@ export default function InGame({
           <h1 className="text-2xl font-bold text-center">Cartes</h1>
 
           <div className="grid grid-cols-2 gap-4">
-            {cardsVariants.map((card, index) => (
+            {Object.values(CARDS).map((card, index) => (
               <div className="flex gap-2 items-center">
                 <Image
                   src={card.image}
-                  alt={card.text}
+                  alt={card.description}
                   height={50}
                   width={50}
                 ></Image>
-                <div>{card.text}</div>
+                <div>{card.description}</div>
               </div>
             ))}
           </div>
@@ -174,6 +213,27 @@ export default function InGame({
         progress={progress}
       ></CardsBar>
     </div>
+  );
+}
+
+function NeutralizedScreen({ timeLeft }: { timeLeft: number }) {
+  return (
+    <motion.div
+      animate={{ opacity: 1 }}
+      initial={{ opacity: 0 }}
+      className="bg-black/50 p-4 z-10 absolute top-0 left-0 w-full h-full flex items-center justify-center"
+    >
+      <motion.div
+        animate={{ scale: 1 }}
+        initial={{ scale: 0 }}
+        className="bg-red-600 p-4 rounded-lg space-y-4 text-white"
+      >
+        <h1 className="font-bold">⚡️ Vous êtes neutralisé !</h1>
+        <h2 className="text-center">
+          Vous ne pouvez plus jouer pendant {timeLeft} secondes
+        </h2>
+      </motion.div>
+    </motion.div>
   );
 }
 
