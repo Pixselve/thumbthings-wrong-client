@@ -46,16 +46,16 @@ export function CardInDeck({cardType, onClick, progress}: CardInDeckProps) {
     return (
         <div
             onClick={() => (progress >= price) && onClick(cardType, price)}
-            className={`relative transition-all ${progress >= price ? 'opacity-100 hover:-translate-y-5 hover:shadow cursor-pointer ' : 'opacity-50'}`}
+            className={`relative transition-all ${progress >= price ? 'opacity-100 hover:-translate-y-5 hover:shadow cursor-pointer ' : 'grayscale'}`}
         >
             <img
-                className="bg-white overflow-hidden h-20 w-16 object-contain rounded-md border-black border-2"
+                className="bg-white overflow-hidden h-32 w-24 object-contain rounded-md border-black border-4"
                 src={image}
                 alt="Card image"
             />
             <div className="absolute -bottom-2 w-full flex justify-center">
         <span
-            className="bg-green-600 h-6 aspect-square rounded-full flex items-center justify-center text-white border-black border-2">
+            className="bg-green-600 h-8 aspect-square rounded-full flex items-center justify-center text-white border-black border-4">
           {price}
         </span>
             </div>
