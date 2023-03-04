@@ -42,7 +42,7 @@ export default function InGame({
   );
 
   const [progress, setProgress] = useState(0);
-  const [cardDeck, setCardDeck] = useState<number[]>([]);
+  const [cardDeck, setCardDeck] = useState<CardType[]>([]);
   const [roleDisplay, setRoleDisplay] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [cardWaitingToBeSent, setCardWaitingToBeSent] = useState(-1);
@@ -100,7 +100,7 @@ export default function InGame({
   useEffect(() => {
     // fill the deck with random cards when the game starts
     setCardDeck(() => {
-      const newDeck: number[] = [];
+      const newDeck: CardType[] = [];
       for (let i = 0; i < DECK_SIZE; i++) {
         let card = getRandomCard();
         // do not give a new card that is already in the deck
@@ -144,7 +144,7 @@ export default function InGame({
 
   function shuffleDeck() {
     // get a new deck composed of random cards. Only unique cards are allowed
-    const newDeck: number[] = [];
+    const newDeck: CardType[] = [];
     for (let i = 0; i < DECK_SIZE; i++) {
       let card = getRandomCard();
       // do not give a new card that is already in the deck
