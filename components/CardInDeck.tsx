@@ -32,7 +32,7 @@ function getCardImageAndPrice(cardType: CardType): {
     case CardType.ALWAYS_MOVING:
       return { image: "cards/forcerun.png", price: 5 };
     case CardType.NO_COLLISION:
-      return { image: "cards/noJump.png", price: 6 };
+      return { image: "cards/collisionromove.png", price: 6 };
   }
 }
 
