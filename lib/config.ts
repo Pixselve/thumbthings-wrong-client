@@ -9,7 +9,7 @@ export const WEB_SOCKET_URL =
 
 export const SECONDS_BEFORE_GAME_START = 5;
 
-export const NEUTRALIZE_TIME = 5;
+export const NEUTRALIZE_TIME = 8;
 
 export type CardType = keyof typeof CARDS;
 
