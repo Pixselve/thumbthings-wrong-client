@@ -29,7 +29,7 @@ export const CARDS = {
   2: {
     image: "/cards/gravity.png",
     description: "Désactiver la gravité",
-    price: 8,
+    price: 7,
     targetPlayer: false,
   },
   3: {
@@ -41,7 +41,7 @@ export const CARDS = {
   4: {
     image: "/cards/forcerun.png",
     description: "Force le joueur à se déplacer",
-    price: 6,
+    price: 8,
     targetPlayer: false,
   },
   5: {
