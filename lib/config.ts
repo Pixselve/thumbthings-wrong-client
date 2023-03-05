@@ -17,13 +17,13 @@ export const CARDS = {
   0: {
     image: "/cards/Reverse_control.png",
     description: "Inverser les touches",
-    price: 4,
+    price: 3,
     targetPlayer: false,
   },
   1: {
     image: "/cards/camera_front.png",
     description: "Inverser la caméra",
-    price: 4,
+    price: 3,
     targetPlayer: false,
   },
   2: {

@@ -5,6 +5,14 @@ import MainMenu from "@/components/MainMenu";
 import useWebSocket from "react-use-websocket";
 import WaitingRoom from "@/components/WaitingRoom";
 import { WEB_SOCKET_URL } from "@/lib/config";
+import { EndScreen } from "@/components/EndScreen";
+
+enum GameStatus {
+  Menu,
+  WaitingRoom,
+  InGame,
+  EndScreen,
+}
 
 export default function Home() {
   const { sendMessage, lastMessage, readyState } = useWebSocket(
@@ -12,17 +20,15 @@ export default function Home() {
     { share: true }
   );
 
-  const [isGameStarted, setIsGameStarted] = useState(false);
-  const [inWaitingRoom, setInWaitingRoom] = useState(false);
+  const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Menu);
   const [username, setUsername] = useState("");
   const [isPlayerEnemy, setIsPlayerEnemy] = useState(false);
-
+  const [winnerRole, setWinnerRole] = useState("");
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
     if (readyState === 3) {
-      setIsGameStarted(false);
-      setInWaitingRoom(false);
+      setGameStatus(GameStatus.Menu);
     }
   }, [readyState]);
 
@@ -33,9 +39,8 @@ export default function Home() {
         // PlayerRegistration;{nickname}
         const nickname = message.split(";")[1];
         setUsername(nickname);
-        setInWaitingRoom(true);
-      }
-      if (message.startsWith("RoomStart;")) {
+        setGameStatus(GameStatus.WaitingRoom);
+      } else if (message.startsWith("RoomStart;")) {
         // RoomStart;{otherplayer1}-{role};{otherplayer2}-{role};{otherplayer3}-{role};{otherplayer4}-{role}
         const playersWithRoles = message.split(";");
         playersWithRoles.shift();
@@ -45,30 +50,44 @@ export default function Home() {
             setIsPlayerEnemy(role === "enemy");
           }
         });
-
-        setIsGameStarted(true);
-        setInWaitingRoom(false);
-      }
-      if (message.startsWith("PlayerList;")) {
+        setGameStatus(GameStatus.InGame);
+      } else if (message.startsWith("PlayerList;")) {
         const players = message.split(";");
         players.shift();
         setPlayers(players);
+      } else if (message.startsWith("end;")) {
+        const winnerRole = message.split(";")[1];
+        setWinnerRole(winnerRole);
+        setGameStatus(GameStatus.EndScreen);
       }
     }
   }, [lastMessage]);
 
-  if (isGameStarted) {
-    return (
-      <InGame
-        players={players}
-        isPlayerEnemy={isPlayerEnemy}
-        username={username}
-      />
-    );
-  }
-  if (inWaitingRoom) {
-    return <WaitingRoom players={players}></WaitingRoom>;
+  function reset() {
+    // refresh page to reset state and clear websocket
+    window.location.reload();
   }
 
-  return <MainMenu></MainMenu>;
+  switch (gameStatus) {
+    case GameStatus.Menu:
+      return <MainMenu></MainMenu>;
+    case GameStatus.WaitingRoom:
+      return <WaitingRoom players={players}></WaitingRoom>;
+    case GameStatus.InGame:
+      return (
+        <InGame
+          players={players}
+          isPlayerEnemy={isPlayerEnemy}
+          username={username}
+        />
+      );
+    case GameStatus.EndScreen:
+      return (
+        <EndScreen
+          onQuit={reset}
+          winnerRole={winnerRole}
+          isPlayerEnemy={isPlayerEnemy}
+        ></EndScreen>
+      );
+  }
 }
